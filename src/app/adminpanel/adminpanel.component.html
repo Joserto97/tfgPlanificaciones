@@ -1,0 +1,987 @@
+<div class="container-fluid">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light cursor">
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+            aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation"
+            (click)="toggleCollapsed()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02"
+            [ngClass]="{'collapse': collapsed, 'navbar-collapse': true}">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <!-- <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a> -->
+                    <div class="nav-link"
+                        (click)="reload()">
+                        Inicio</div>
+                </li>
+                <li class="nav-item">
+                    <!-- <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a> -->
+                    <div class="nav-link"
+                        (click)="previaVistaResultados=false;verDetalleResultado=false;tablaFinal=false;ventanaSimulacion=false;identificacion=false;primerpaso=false;tercerpaso=false;cuartopaso=false;identificacion=false;verDetallePlantilla=false;
+                        previaCreacionPlantilla=false;collapsed=true;mensajeRegistro=0;registrarAlumno=false;registrarRecursos=true;
+                        mostrarProyectosValidacionRecursos();creacionPlantilla=false;ventanaSimulacion=false;verDetalleSimulacion=false;previaRegistro=false">
+                        Validación de Recursos</div>
+                </li>
+                <li class="nav-item">
+                    <!-- <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a> -->
+                    <div class="nav-link"
+                        (click)="previaVistaResultados=false;verDetalleResultado=false;tablaFinal=false;verDetallePlantilla=false;collapsed=true;mensajeRegistro=0;nuevoProyecto();ventanaSimulacion=false;registrarAlumno=false;
+                        registrarRecursos=false;tercerpaso=false;cuartopaso=false;verDetalleSimulacion=false;creacionPlantilla=false;previaRegistro=false">
+                        Ver/Crear plantillas</div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" (click)="previaVistaResultados=false;verDetalleResultado=false;tablaFinal=false;identificacion=false;primerpaso=false;tercerpaso=false;cuartopaso=false;identificacion=false;verDetallePlantilla=false;
+                        collapsed=true;mensajeRegistro=0;descargaProyectosSimulacion();creacionPlantilla=false;registrarAlumno=false;registrarRecursos=false;
+                        previaCreacionPlantilla=false;verDetalleSimulacion=false;previaRegistro=false">
+                        Ver proyectos en simulación</div>
+                    <!-- <a class="nav-link" href="#">Link</a> -->
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link"
+                        (click)="verDetalleResultado=false;tablaFinal=false;identificacion=false;primerpaso=false;tercerpaso=false;cuartopaso=false;identificacion=false;verDetallePlantilla=false;
+                        collapsed=true;mensajeRegistro=0;creacionPlantilla=false;registrarAlumno=false;registrarRecursos=false;
+                        previaCreacionPlantilla=false;verDetalleSimulacion=false;previaRegistro=false;descargaProyectosFinalizados();ventanaSimulacion=false">
+                        Ver proyectos finalizados</div>
+                    <!-- <a class="nav-link" href="#">Link</a> -->
+                </li>
+
+                <li class="nav-item">
+                    <div class="nav-link"
+                        (click)="previaVistaResultados=false;verDetalleResultado=false;tablaFinal=false;identificacion=false;primerpaso=false;tercerpaso=false;cuartopaso=false;identificacion=false;verDetallePlantilla=false;
+                        collapsed=true;registrarAlumno=false;previaRegistro=true;registrarRecursos=false;creacionPlantilla=false;
+                        ventanaSimulacion=false;previaCreacionPlantilla=false;verDetalleSimulacion=false;getUsuarios();">
+                        Ver/Registrar Usuarios</div>
+                    <!-- <a class="nav-link disabled" href="#">Disabled</a> -->
+                </li>
+            </ul>
+
+            <div class="mx-auto">
+                <a class="navbar-brand">Panel del Profesor</a>
+            </div>
+            <div>
+                <ul class="form-inline my-2 my-lg-0">
+                    <li class="nav-item">
+                        <div class="nav-link" (click)="logOut()">Hola, {{profesor.data.nombre}} -> Cerrar Sesión</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- INICIO -->
+    <div *ngIf="!previaRegistro && !registrarAlumno && !proyecto && !previaCreacionPlantilla && !verDetallePlantilla
+    && !creacionPlantilla && !registrarRecursos && !formularioRecursos && !nuevosRecursos && !ventanaSimulacion
+     && !verDetalleSimulacion && !tablaFinal && !previaVistaResultados && !verDetalleResultado">
+        <br>
+        <br>
+        <h6>
+            Hola {{profesor.data.nombre}}, bienvenido!!:
+        </h6>
+    </div>
+    <div>
+
+        <!-- LISTADO DE ALUMNOS -->
+       
+        <div *ngIf="previaRegistro && this.usuarios.length>0">
+            <br>
+
+            <h6>Estos son los alumnos que actualmente están creados, para crear uno nuevo haz clic en crear al final de
+                esta lista.</h6>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+
+                        <td>
+                            Grupo
+                        </td>
+                        <td>
+                            Componentes
+                        </td>
+                        <td>
+                            E-mail
+                        </td>
+                        <td>
+                            Rol
+                        </td>
+                        <td>
+                            Acción
+                        </td>
+
+
+                    </tr>
+                </thead>
+                <tr *ngFor="let  usuario of this.usuarios; let i = index" >
+                    <td>
+                        {{usuario.nombre}}
+                    </td>
+                    <td>
+                        {{usuario.componentes}}
+                    </td>
+
+                    <td>
+                        {{usuario.email}}
+                    </td>
+                    <td>
+                        {{usuario.rol}}
+                    </td>
+                    <td>
+                        <input class="btn btn-outline-secondary" type="button" value="Eliminar"
+                            (click)="eliminarAlumno(usuario,i)" [hidden]="usuario.email==profesor.data.email">
+                    </td>
+
+                </tr>
+                <tr>
+                    <input class="btn btn-outline-secondary" type="button" value="Crear Usuario"
+                        (click)="registrarAlumno=true;previaRegistro=false;">
+                </tr>
+
+            </table>
+            <div>
+                <h5 *ngIf="mensajeRegistro==1">El alumno ha sido registrado correctamente.</h5>
+                <h5 *ngIf="mensajeRegistro==2">Se ha producido un error en el registro, inténtalo de nuevo.</h5>
+
+            </div>
+
+        </div>
+        <!-- FORMULARIO REGISTRO ALUMNOS -->
+
+
+
+        <form *ngIf="registrarAlumno" (ngSubmit)="registrar(newUserForm.value)" [formGroup]="newUserForm">
+            <div class="form-group">
+                <label>Nombre del Grupo/Profesor</label>
+                <input class="form-control" id="nombre" placeholder="Introduce el nombre completo del grupo*."
+                    formControlName="nombre">
+            </div>
+            <div class="form-group">
+                <label>Componentes/Profesor</label>
+                <input class="form-control" id="componentes"
+                    placeholder="Introduce el nombre de los componentes del grupo*." formControlName="componentes">
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input class="form-control" id="email"
+                    placeholder="Introduce el email de uno de los usuarios del grupo." formControlName="email">
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" class="form-control" id="contrasenia1"
+                    placeholder="Introduce la contraseña que tendrá el alumno por defecto." formControlName="password">
+            </div>
+            <div class="form-group">
+                <label>Tipo de usuario</label>
+                <select [(ngModel)]="rol" class="form-control" formControlName="rol">
+                    <option value="0">Selecciona una opción</option>
+                    <option *ngFor="let rol of roles">
+                        {{rol}}
+                    </option>
+                </select>
+            </div>
+            <br>
+            <h6>*En caso de que el usuario a registrar sea un profesor, introducir aquí el nombre del profesor.</h6>
+            <br>
+            <table>
+                <tr>
+                    <td>
+                        <input type="submit" class="btn btn-outline-secondary" [disabled]="!newUserForm.valid"
+                            value="Registrar">
+
+                    </td>
+                    <td>
+                        <input type="submit" class="btn btn-outline-secondary" value="Volver"
+                            (click)="registrarAlumno=false;previaRegistro=true;">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <!-- <div>
+            <h5 *ngIf="mensajeRegistro==1">El alumno ha sido registrado correctamente.</h5>
+            <h5 *ngIf="mensajeRegistro==2">Se ha producido un error en el registro, inténtalo de nuevo.</h5>
+
+        </div> -->
+
+    </div>
+
+
+    <!-- Pantalla principal plantillas-->
+    <div *ngIf="proyecto && previaCreacionPlantilla">
+        <br>
+
+        <h6>Estas son las plantillas que actualmente están creadas, para crear una nueva haz clic en crear al final de
+            esta lista.</h6>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+
+                    <td>
+                        Tipo
+                    </td>
+                    <td>
+                        Descripción
+                    </td>
+                    <td>
+                        Acción
+                    </td>
+                </tr>
+            </thead>
+            <tr *ngFor="let plantilla of this.plantillas; let i = index">
+                <td>
+                    {{plantilla.tipo}}
+                </td>
+                <td>
+                    {{plantilla.descripcion}}
+                </td>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Ver detalle"
+                        (click)="verDetallePlantilla=true;previaCreacionPlantilla=false;detallePlantillaActual=plantilla">
+                </td>
+            </tr>
+            <tr>
+                <input class="btn btn-outline-secondary" type="button" value="Crear Plantilla"
+                    (click)="creacionPlantilla=true;previaCreacionPlantilla=false;introduccion=true">
+            </tr>
+
+
+        </table>
+    </div>
+
+    <!-- DEtalle plantillas -->
+    <div *ngIf="verDetallePlantilla">
+        <br>
+        <h5>Este es el detalle de la plantilla: {{detallePlantillaActual.tipo}}.
+        </h5>
+        <br>
+        <h6>A continuación podrás encontrar las tareas y recursos de los que está formada la plantilla.</h6>
+        <br>
+        <h6>TAREAS DE LA PLANTILLA</h6>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <td>
+                        NOMBRE DE TAREA:
+                    </td>
+                    <td>
+                        DESCRIPCION:
+                    </td>
+                    <td>
+                        PORCENTAJE ÓPTIMO:
+                    </td>
+                    <td>
+                        PORCENTAJE PÉSIMO:
+                    </td>
+                    <td>
+                        RECURSOS MÍNIMOS
+                    </td>
+
+                </tr>
+            </thead>
+            <tr *ngFor="let tarea of detallePlantillaActual.tareas">
+                <td>{{tarea.nombre}}</td>
+                <td>{{tarea.descripcion}}</td>
+                <td>{{tarea.pOptimo}}</td>
+                <td>{{tarea.pPesimo}}</td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>NOMBRE DEL RECURSO</td>
+                            <td>CANTIDAD NECESARIA</td>
+                        </tr>
+
+                        <tr *ngFor="let recurso of tarea.recursosMin; let j = index">
+                            <td>{{recurso.nombre}}</td>
+                            <td>{{recurso.cantidad}}</td>
+                        </tr>
+                    </table>
+                </td>
+
+            </tr>
+
+        </table>
+
+        <br>
+        <h6>RECURSOS DE LA PLANTILLA</h6>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <td>
+                        NOMBRE DEL RECURSO:
+                    </td>
+                    <td>
+                        DESCRIPCION:
+                    </td>
+                    <td>
+                        % DEGRADACIÓN:
+                    </td>
+
+                </tr>
+            </thead>
+            <tr *ngFor="let recurso of detallePlantillaActual.recursos">
+                <td>{{recurso.nombre}}</td>
+                <td>{{recurso.descripcion}}</td>
+                <td>{{recurso.degradacion}}</td>
+            </tr>
+
+            <tr>
+                <input type="submit" class="btn btn-outline-secondary" value="Volver"
+                    (click)="verDetallePlantilla=false;previaCreacionPlantilla=true;detallePlantillaActual=null">
+            </tr>
+
+        </table>
+
+
+
+    </div>
+
+    <!-- Creacion Plantilla -->
+    <div *ngIf="proyecto && creacionPlantilla">
+        <h2>
+            Creación de una plantilla de proyecto.
+        </h2>
+        <br>
+        <div *ngIf="introduccion">
+            <h6>
+                Para crear una plantilla de proyecto, deberás cumplimentar los siguientes formularios que constan de:
+            </h6>
+            <ol>
+                <li>
+                    Identificación.
+                </li>
+                <li>
+                    Recursos Tipo.
+                </li>
+                <li>
+                    Tareas Tipo.
+                </li>
+                <li>
+                    Asignación recursos mínimos de cada tarea.
+                </li>
+            </ol>
+            <br>
+            <input class="btn btn-outline-secondary" type="button" value="Comenzar"
+                (click)="identificacion=true;introduccion=false">
+            <br>
+
+
+        </div>
+        <div *ngIf="identificacion">
+            <h5>Identificación</h5>
+            <!-- Formulario creación del proyecto-->
+            <!-- Nombre, descripcion, [tipo de proyecto(software,general)], calendarizar, sin sabados ni domingos -->
+            <br>
+            <form *ngIf="proyecto && identificacion">
+                <h6>Tipo de la plantilla del proyecto.</h6>
+                <input class="form-control" placeholder="Tipo del proyecto.  Ej:Proyecto Software."
+                    [(ngModel)]="proyecto.tipo" [ngModelOptions]="{standalone: true}">
+                <br>
+                <h6>Descripción de la plantilla.</h6>
+                <input class="form-control" placeholder="Descripción de la plantilla."
+                    [(ngModel)]="proyecto.descripcion" [ngModelOptions]="{standalone: true}">
+                <br>
+                <input [disabled]="!proyecto.tipo || !proyecto.descripcion" class="btn btn-outline-secondary"
+                    type="button" value="Siguiente" (click)="primerpaso=true;identificacion=false;">
+
+
+
+            </form>
+        </div>
+        <br>
+        <div *ngIf="primerpaso">
+            <h5>Recursos</h5>
+            <h6>A continuación propón una lista de recursos que serán necesarios para realizar este tipo de proyecto.
+            </h6>
+            <form *ngIf="primerpaso">
+                <table *ngIf="mostrarTablaRecursos" class="table">
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            NOMBRE
+                        </td>
+                        <td>
+                            DESCRIPCIÓN
+                        </td>
+                        <td>
+                            % FALLO
+                        </td>
+
+                    </tr>
+                    <tr *ngFor="let recurso of proyecto.recursos; let i = index">
+                        <td>Recurso {{ i + 1 }}</td>
+
+                        <td>
+                            <input class="form-control" placeholder="Nombre del Recurso." [(ngModel)]="recurso.nombre"
+                                [ngModelOptions]="{standalone: true}">
+                        </td>
+                        <td>
+                            <input class="form-control" placeholder="Descripción del Recurso."
+                                [(ngModel)]="recurso.descripcion" [ngModelOptions]="{standalone: true}">
+
+                        </td>
+                        <td>
+                            <input class="form-control" type="number" placeholder="% fallo" min="0" max="100" step="1"
+                                [(ngModel)]="recurso.degradacion" [ngModelOptions]="{standalone: true}">
+
+                        </td>
+                        <td>
+                            <input class="btn btn-outline-secondary" type="button" value="Eliminar"
+                                (click)="eliminarElemento(i,'recurso')">
+                        </td>
+
+
+                    </tr>
+
+                </table>
+                <br>
+
+                <table>
+                    <tr>
+
+                        <td>
+                            <input class="btn btn-outline-secondary" type="button" value="Añadir recurso"
+                                (click)="newRecurso()">
+
+                        </td>
+                        <td>
+                            <input class="btn btn-outline-secondary" type="button" value="Anterior"
+                                (click)="primerpaso=false;identificacion=true;">
+                        </td>
+
+                        <td>
+                            <input [disabled]="!hayUnRecurso()" class="btn btn-outline-secondary" type="button"
+                                value="Siguiente" (click)="primerpaso=false;segundopaso=false;tercerpaso=true;">
+                        </td>
+                    </tr>
+                </table>
+
+
+            </form>
+        </div>
+        <div *ngIf="tercerpaso">
+            <br>
+            <h6>
+                En este formulario deberás añadir las tareas básicas de las que constará la plantilla.
+
+            </h6>
+            <form>
+
+                <table class="table" *ngIf="mostrarTabla">
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            TAREAS
+                        </td>
+                        <td>
+                            DESCRIPCIÓN
+                        </td>
+                        <td>
+                            % OPTIMO
+                        </td>
+                        <td>
+                            % PESIMO
+                        </td>
+
+                    </tr>
+                    <tr *ngFor="let tarea of proyecto.tareas; let i = index">
+                        <td>Tarea {{ i + 1 }}</td>
+                        <td>
+                            <input class="form-control" type="text" placeholder="Nombre tarea"
+                                [(ngModel)]="tarea.nombre" [ngModelOptions]="{standalone: true}">
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" placeholder="Descripción tarea"
+                                [(ngModel)]="tarea.descripcion" [ngModelOptions]="{standalone: true}">
+                        </td>
+                        <td>
+                            <input class="form-control" type="number" min="0" max="100" [(ngModel)]="tarea.pOptimo"
+                                [ngModelOptions]="{standalone: true}">
+                        </td>
+                        <td>
+                            <input class="form-control" type="number" min="0" max="100" [(ngModel)]="tarea.pPesimo"
+                                [ngModelOptions]="{standalone: true}">
+                        </td>
+                        <td>
+                            <input class="btn btn-outline-secondary" type="button" value="Eliminar"
+                                (click)="eliminarElemento(i,'tarea')">
+                        </td>
+
+
+
+                    </tr>
+                </table>
+                <br>
+                <table>
+                    <tr>
+                        <td>
+                            <input class="btn btn-outline-secondary" type="button" value="Añadir tarea"
+                                (click)="addTarea()">
+
+                        </td>
+                        <td>
+                            <input class="btn btn-outline-secondary" type="button" value="Anterior"
+                                (click)="primerpaso=true;tercerpaso=false;">
+                        </td>
+                        <td>
+                            <input [disabled]="!hayUnaTarea()" type="submit" class="btn btn-outline-secondary"
+                                value="Siguiente" (click)="tercerpaso=false;cuartopaso=true;previaCreacionTareas()">
+
+                        </td>
+
+
+                    </tr>
+                </table>
+            </form>
+
+
+        </div>
+
+        <div *ngIf="cuartopaso">
+            <br>
+            <h6>A continuación introduce una cantidad de recursos mínimos necesarios para que la tarea se lleve a cabo.</h6>
+            <form>
+                <table class="table">
+                    <tr>
+                        <td>
+                            NOMBRE DE LA TAREA
+                        </td>
+                        <td>
+                            RECURSOS
+                        </td>
+                    </tr>
+                    <tr *ngFor="let tarea of proyecto.tareas; let i = index">
+                        <td>
+                            {{tarea.nombre}}
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>NOMBRE DEL RECURSO</td>
+                                    <td>CANTIDAD NECESARIA</td>
+                                </tr>
+
+                                <tr *ngFor="let recurso of proyecto.recursos; let j = index">
+                                    <td>{{recurso.nombre}}</td>
+                                    <td><input min="0" type="number" [(ngModel)]="tarea.recursosMin[j].cantidad"
+                                            [ngModelOptions]="{standalone: true}" class="form-control">
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <td>
+                        <input class="btn btn-outline-secondary" type="button" value="Anterior"
+                            (click)="tercerpaso=true;primerpaso=false;cuartopaso=false">
+                    </td>
+                    <td>
+                        <input type="submit" class="btn btn-outline-secondary" value="Crear"
+                            (click)="guardarProyecto()">
+                    </td>
+                </table>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Registro y administración de recursos para un proyecto -->
+    <div class="mx-auto" *ngIf="registrarRecursos && alumnosconproyectos.length==0">
+        <br>
+        <h6>
+            No hay ningún proyecto pendiente de validar sus recursos, puede haber ocurrido un error en la carga de la
+            página, recarga de nuevo o vuelve más tarde.
+        </h6>
+    </div>
+    <div class="mx-auto" *ngIf="registrarRecursos && alumnosconproyectos.length>0">
+        <br>
+        <h6>
+            A continuación se muestra una lista de proyectos pendientes de validar sus recursos.
+        </h6>
+        <br>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <td>
+                        Nombre del alumno.
+                    </td>
+                    <td>
+                        Nombre del proyecto.
+                    </td>
+                    <td>
+                        Tipo del proyecto.
+                    </td>
+                    <td>
+                        Acción.
+                    </td>
+                </tr>
+            </thead>
+
+            <tr *ngFor="let user of alumnosconproyectos">
+                <td>
+                    {{user.usuario.data.nombre}}
+                </td>
+                <td>
+                    {{user.proyectos.nombre}}
+                </td>
+                <td>
+                    {{user.proyectos.tipo}}
+                </td>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Validar Recursos"
+                        (click)="previaAsignacionRec(user.usuario.data.nombre,user.proyectos.nombre,user.proyectos.recursos,user.proyectos.descripcion,user.usuario.id,user.proyectos.tareas)">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- Formulario recursos administracion -->
+    <div *ngIf="formularioRecursos && !nuevosRecursos">
+        <br>
+        <h4>
+            VALIDACIÓN DE RECURSOS
+        </h4>
+        <br>
+        <h6>
+            Realiza los cambios oportunos. Si consideras que no es necesario realizar cambios deja los campos tal cuál.
+        </h6>
+        <br>
+        <table class="table">
+            <tr>
+                <td>
+                    Nombre del recurso.
+                </td>
+                <td>
+                    Descripción.
+                </td>
+                <!-- <td>
+                        Validado.
+                    </td> -->
+
+            </tr>
+            <tr *ngFor="let recurso of recursosProyectoActual;let i = index">
+                <td>
+                    {{recurso.nombre}}
+                </td>
+                <td>
+                    {{recurso.descripcion}}
+                </td>
+                <td>
+                    <input type="number" min="1" class="form-control" placeholder="Unidades disponibles."
+                        [(ngModel)]="recurso.cantidad" [ngModelOptions]="{standalone: true}"
+                        (ngModelChange)="validateInputRecursos(recurso)">
+
+                </td>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Eliminar Recurso"
+                        (click)="eliminarElemento(i,'recursoValidacion')">
+                </td>
+                <!-- <td>
+                         <select name="miselect" [(ngModel)]="numSeleccionado">
+                        <option [value]="0" *ngFor="let num of numeroRecursos">{{num}}</option>
+                    </select> 
+                        <input type="checkbox" [(ngModel)]="recurso.validado" /><br>
+
+                    </td> -->
+
+            </tr>
+            <tr>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Registrar selección"
+                        (click)="actualizarProyecto()">
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+
+            </tr>
+        </table>
+
+    </div>
+
+    <div *ngIf="formularioRecursos && nuevosRecursos">
+        <br>
+        <h6>A continuación propón una lista de recursos a añadir a los validados.</h6>
+        <table>
+            <tr *ngFor="let recurso of recursosProyectoActual; let i = index">
+                <td>
+                    <input class="form-control" placeholder="Nombre del Recurso." [(ngModel)]="recurso.nombre"
+                        [ngModelOptions]="{standalone: true}">
+                </td>
+                <td>
+                    <input class="form-control" placeholder="Descripción del Recurso." [(ngModel)]="recurso.descripcion"
+                        [ngModelOptions]="{standalone: true}">
+
+                </td>
+                <td>
+                    <input type="number" min="1" class="form-control" placeholder="Unidades disponibles."
+                        [(ngModel)]="recurso.cantidad" [ngModelOptions]="{standalone: true}">
+
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Añadir otro recurso"
+                        (click)="addRecurso()">
+
+                </td>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Guardar"
+                        (click)="actualizarProyecto()">
+
+                </td>
+            </tr>
+        </table>
+
+        <br>
+    </div>
+
+    <!-- Pantalla principal alumnos y proyectos en simulacion -->
+    <!-- <div class="mx-auto" *ngIf="ventanaSimulacion && alumnosConProyectosEnSimulacion.length==0">
+        <br>
+        <h6>
+            No hay ningún proyecto en simulación, puede haber ocurrido un error en la carga de la página, recarga de nuevo o vuelve más tarde.
+        </h6>
+    </div> -->
+    <div class="mx-auto" *ngIf="ventanaSimulacion && alumnosConProyectosEnSimulacion.lentgh!=0">
+        <br>
+        <h6>
+            A continuación se muestra una lista de proyectos en estado de simulación, haz clic en ver detalle para más
+            infomación.
+        </h6>
+        <br>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <td>
+                        Nombre del alumno.
+                    </td>
+                    <td>
+                        Email del alumno.
+                    </td>
+                    <td>
+                        Nombre del proyecto.
+                    </td>
+                    <td>
+                        Días empleados en el proyecto.
+                    </td>
+                    <td>
+                        Tareas completadas.
+                    </td>
+                    <td>
+                        Estado.
+                    </td>
+                    <td>
+                        Acción.
+                    </td>
+                </tr>
+            </thead>
+
+            <tr *ngFor="let user of alumnosConProyectosEnSimulacion">
+                <td>
+                    {{user.alumno.data.nombre}}
+                </td>
+                <td>
+                    {{user.alumno.data.email}}
+                </td>
+                <td>
+                    {{user.estadoSimulacion.nombre}}
+                </td>
+                <td>
+                    {{user.estadoSimulacion.diasTotalesProyecto}}
+                </td>
+                <td>
+                    {{calculaAcabadas(user.alumno.id)}}
+                </td>
+                <td>
+                    {{user.estadoSimulacion.estado}}
+                </td>
+                <td>
+                    <input *ngIf="user.estadoSimulacion.estado=='simulando'" class="btn btn-outline-secondary"
+                        type="button" value="Ver detalle"
+                        (click)="verDetalleSimulacion=true;ventanaSimulacion=false;detalleSimulacionActual=user">
+                    <input *ngIf="user.estadoSimulacion.estado=='finalizado'" class="btn btn-outline-secondary"
+                        type="button" value="Ver resultados"
+                        (click)="ventanaSimulacion=false;tablaFin(user.alumno.id,user.alumno.data.nombre)">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div *ngIf="verDetalleSimulacion">
+        <h6>Este es el estado de las tareas del proyecto del alumno.
+        </h6>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <td>
+                        NOMBRE DE TAREA:
+                    </td>
+                    <td>
+                        ESTADO:
+                    </td>
+                    <td>
+                        DIAS EMPLEADOS*:
+                    </td>
+
+                </tr>
+            </thead>
+            <tr *ngFor="let tarea of detalleSimulacionActual.estadoSimulacion.tareas">
+                <td>{{tarea.nombre}}</td>
+                <td>{{tarea.estado}}</td>
+                <td>{{tarea.diasEmpleados}}</td>
+            </tr>
+
+        </table>
+        <br>
+        <h6>Dias totales de ejecución del plan:</h6>
+        <h6> {{detalleSimulacionActual.estadoSimulacion.diasTotalesProyecto}}</h6>
+        <br>
+        <h6>
+            *El número de días empleados se refiere a la cantidad de días que la tarea lleva en proceso o a la cantidad
+            de días que ha consumido para compeltarse en caso de que ya este finalizada.
+        </h6>
+        <input class="btn btn-outline-secondary" type="button" value="Atras"
+            (click)="verDetalleSimulacion=false;ventanaSimulacion=true">
+
+
+    </div>
+
+    <div *ngIf="tablaFinal"> <br>
+
+        <h6>Estos son los resultados del proyecto del alumno seleccionado.</h6>
+
+
+        <table class="table">
+            <tr>
+                <td>
+                    DIA OCURRENCIA
+                </td>
+                <td>
+                    ACCIÓN
+                </td>
+                <td>
+                    RECURSO IMPLICADO
+                </td>
+                <td>
+                    TAREA IMPLICADA
+                </td>
+
+            </tr>
+            <tr *ngFor="let evento of eventos; let i = index">
+                <td>{{evento.dia}}</td>
+                <td>{{evento.accion}}</td>
+                <td>{{evento.recursoImplicado}}</td>
+                <td>{{evento.tareaImplicacada}}</td>
+
+            </tr>
+
+        </table>
+        <table>
+            <td>
+                <input class="btn btn-outline-secondary" type="button" value="Atras"
+                (click)="verDetalleSimulacion=false;ventanaSimulacion=true;tablaFinal=false">
+    
+            </td>
+        </table>
+
+    </div>
+
+    <!-- Pantalla principal proyectos finalizados-->
+    <div *ngIf="previaVistaResultados">
+        <br>
+
+        <h6>Estos son las simulaciones que actualmente están entregadas para evaluar, para ver el detalle de cada una
+            puedes hacer clic en Ver detalle.</h6>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+
+                    <td>
+                        Nombre Grupo
+                    </td>
+                    <td>
+                        Componentes
+                    </td>
+                    <td>
+                        E-mail
+                    </td>
+                    <td>
+                        Acción
+                    </td>
+                </tr>
+            </thead>
+            <tr *ngFor="let proyecto of this.proyectosFinalizados; let i = index">
+                <td>
+                    {{proyecto.usuario.nombre}}
+                </td>
+                <td>
+                    {{proyecto.usuario.componentes}}
+                </td>
+                <td>
+                    {{proyecto.usuario.email}}
+                </td>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Ver detalle"
+                        (click)="verDetalleResultado=true;previaVistaResultados=false;detalleProyectoActual=proyecto;
+                        nombreAlumnoResultados=proyecto.usuario.nombre">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Detalle resultados -->
+    <div *ngIf="verDetalleResultado">
+        <br>
+        <h6>Estos son los resultados del alumno en el proyecto actual.
+        <br>
+        </h6>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <td>
+                        DIA OCURRENCIA:
+                    </td>
+                    <td>
+                        EVENTO:
+                    </td>
+                    <td>
+                        RECURSO IMPLICADO:
+                    </td>
+                    <td>
+                        TAREA IMPLICADA:
+                    </td>
+
+                </tr>
+            </thead>
+            <tr *ngFor="let evento of detalleProyectoActual.eventos">
+                <td>{{evento.dia}}</td>
+                <td>{{evento.accion}}</td>
+                <td>{{evento.recursoImplicado}}</td>
+                <td>{{evento.tareaImplicacada}}</td>
+
+            </tr>
+
+        </table>
+        <table>
+            <tr>
+                <td>         
+                    <input class="btn btn-outline-secondary" (click)="exportTableToCSV()"
+                        value="Descargar csv" type="button"> 
+                </td>
+                <td>
+                    <input class="btn btn-outline-secondary" type="button" value="Atras"
+                    (click)="verDetalleResultado=false;previaVistaResultados=true">
+        
+                </td>
+            </tr>
+        </table>
+       
+
+    </div>

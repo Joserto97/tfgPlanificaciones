@@ -1,0 +1,661 @@
+
+<div class="container">
+    <!-- Barra navegacion alumno -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light cursor">
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+            aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation"
+            (click)="toggleCollapsed()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" [ngClass]="{'collapse': collapsed, 'navbar-collapse': true}">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <!-- <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a> -->
+                    <div class="nav-link" (click)="nuevoProyecto();collapsed=true">Crear un proyecto</div>
+                </li>
+
+            </ul>
+
+            <div class="mx-auto">
+                <a class="navbar-brand">Panel del Alumno</a>
+            </div>
+            <div>
+                <ul class="form-inline my-2 my-lg-0">
+                    <li class="nav-item">
+                        <div class="nav-link" (click)="logOut()">Cerrar Sesión</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Formulario creación del proyecto-->
+    <div *ngIf="proyecto && !gestionarRecursos && plantillas">
+        <h2>
+            Creación de un proyecto.
+        </h2>
+        <h4>
+            Para crear un proyecto cumplimenta el formulario siguiente sin saltarte ningún paso.
+        </h4>
+    </div>
+    <div>
+        <br>
+
+        <form *ngIf="proyecto && primerpaso  && !gestionarRecursos">
+
+
+            <h6>
+                Define un nombre y da una descripción a tu proyecto.
+            </h6>
+            <br>
+            <input class="form-control" placeholder="Nombre del proyecto." [(ngModel)]="proyecto.nombre"
+                [ngModelOptions]="{standalone: true}">
+            <input class="form-control" placeholder="Descripcion del proyecto." [(ngModel)]="proyecto.descripcion"
+                [ngModelOptions]="{standalone: true}">
+            <br>
+            <h6>
+                Elige un tipo de proyecto predefinido.
+            </h6>
+
+            <select [ngModelOptions]="{standalone: true}" [(ngModel)]="plantillaSeleccionada">
+                <option value="{{i}}" *ngFor="let plantilla of plantillas; let i = index">{{plantilla.tipo}}</option>
+            </select>
+            <br>
+            <br>
+            <table>
+                <tr>
+                    <td>
+                        <input class="btn btn-outline-secondary" type="button" value="Siguiente"
+                            (click)="selectPlantilla()">
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+        <form *ngIf="proyecto && segundopaso">
+            <!-- <input class="form-control" placeholder="Tipo del proyecto.  Ej:Proyecto Software."
+                [(ngModel)]="proyecto.tipo" [ngModelOptions]="{standalone: true}"> 
+            class="table"class="table"-->
+
+
+            <br>
+            <h5>Recursos</h5>
+            <h6>A continuación propón una lista de recursos que crees que vas a usar para realizar este proyecto.</h6>
+            <table class="table">
+                <tr>
+                    <th>Nombre del Recurso</th>
+                    <th>Descripcion del Recurso</th>
+                    <th>Unidades disponibles</th>
+                </tr>
+                <tr *ngFor="let recurso of proyecto.recursos; let i = index">
+                    <td>
+                        {{recurso.nombre}}
+                    </td>
+                    <td>
+                        {{recurso.descripcion}}
+                    </td>
+                    <td>
+                        <input type="number" min="1" class="form-control" placeholder="Unidades disponibles."
+                            [(ngModel)]="recurso.cantidad" [ngModelOptions]="{standalone: true}"
+                            (ngModelChange)="validateInputCrear(recurso)">
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <!-- <input class="btn btn-outline-secondary" type="button" value="Añadir otro recurso" (click)="addRecurso()"> -->
+            <br>
+
+            <table>
+                <tr>
+                    <td>
+                        <input class="btn btn-outline-secondary" type="button" value="Anterior"
+                            (click)="primerpaso=true;segundopaso=false">
+                    </td>
+                    <td>
+                        <input type="submit" class="btn btn-outline-secondary" value="Crear"
+                            (click)="guardarProyectoInit()">
+
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+
+
+    </div>
+    <!-- Pagina inicio alumno -->
+
+    <!-- No hay Proyecto -->
+    <div
+        *ngIf="!proyecto && !diagramaGant && !simulacionPantalla && !asignarRecursos && !gestionarRecursos && noHayProyectos">
+        <h6>
+            Hola {{alumno.usuario.data.nombre}}, no tienes proyectos activos, ¡Crea Uno!.
+
+        </h6>
+        <input class="btn btn-outline-secondary" type="button" value="Crear Proyecto" (click)="nuevoProyecto()">
+
+    </div>
+
+    <!-- Si hay proyecto -->
+    <div
+        *ngIf="!proyecto && !diagramaGant && !simulacionPantalla && !asignarRecursos && !gestionarRecursos && !noHayProyectos">
+        <h6>
+            Hola {{alumno.usuario.data.nombre}}, este es tu proyecto abierto:
+        </h6>
+
+    </div>
+    <div
+        *ngIf="!proyecto && !diagramaGant && !simulacionPantalla  && !asignarRecursos && !gestionarRecursos && !noHayProyectos &&!tablaFinal &&!replanificar">
+        <table class="table">
+            <tr>
+                <td>
+                    {{alumno.proyectos[0].nombre}}
+                </td>
+                <!-- HAY QUE MIRAR EL ESTADO , CREAR METODO QUE LO HAGA -->
+                <td *ngIf="hayGant && !diagramaGant">
+                    <input class="btn btn-outline-secondary" type="button" value="Ver estado" (click)="dibujaGant()">
+
+                </td>
+
+                <td *ngIf="hayGant && !diagramaGant && !botonFin">
+                    <input class="btn btn-outline-secondary" type="button" value="Simular Planificación"
+                        (click)="simular()">
+                </td>
+
+                <td *ngIf="botonFin">
+                    <input class="btn btn-outline-secondary" type="button" value="Ver Resultados" (click)="tablaFin()">
+                </td>
+
+
+
+                <!-- <td *ngIf="hayRiesgos">
+                        <input class="btn btn-outline-secondary" type="button" value="Añadir Riesgos" (click)="muestraVentanaRiesgos()">
+                    </td> -->
+                <td *ngIf="this.estado=='creado'">
+                    Esperando validación del profesor
+
+                </td>
+                <td>
+
+                    <input *ngIf="this.estado=='recursosValidados'" class="btn btn-outline-secondary" type="button"
+                        value="Añadir Tareas" (click)="muestraVentanaTareas(alumno.usuario)">
+
+                </td>
+
+                <td>
+                    <input *ngIf="botonFin||this.estado=='creado'||this.estado=='recursosValidados'||(hayGant && !diagramaGant && !botonFin
+                    ||(hayGant && !diagramaGant))" class="btn btn-outline-secondary" type="button"
+                        value="Borrar Datos del Proyecto" (click)="borrarProyectos()">
+                </td>
+
+
+            </tr>
+        </table>
+
+        <h6 *ngIf="botonFin||this.estado=='creado'||this.estado=='recursosValidados'||(hayGant && !diagramaGant && !botonFin
+        ||(hayGant && !diagramaGant))">*Al hacer click en Borrar Datos del Proyecto se eliminará todo lo relacionado
+            con este proyecto, tanto lo relacionado con
+            planificación como lo relacionado simulación si esta hubiera comenzado.</h6>
+    </div>
+
+    <!-- Inserccion tareas y gestion REcursos -->
+    <div *ngIf="gestionarRecursos">
+
+        <div>
+            <br>
+            <h6>
+                Hola {{alumno.usuario.data.nombre}}, en este formulario deberás añadir las tareas de las que se
+                compondrá el proyecto:
+            </h6>
+        </div>
+        <br>
+        <form>
+
+            <table class="table" *ngIf="mostrarTabla">
+                <tr>
+                    <td>
+
+                    </td>
+                    <td>
+                        TIPO DE TAREA
+                    </td>
+                    <td>
+                        NOMBRE DE TAREA
+                    </td>
+                    <td>
+                        DÍA DE INICIO*
+                    </td>
+                    <td>
+                        DURACIÓN (DÍAS)
+                    </td>
+                    <td>
+                        DEPENDE DE:
+                    </td>
+                    <!-- <td>
+                        TIPO DE DEPENDENCIA:
+                    </td> -->
+                </tr>
+                <tr *ngFor="let tarea of proyectoTareas.tareas; let i = index">
+                    <td>Tarea {{ i + 1 }}</td>
+                    <td>
+                        <select placeholder="Tipo de tarea:" class="form-control" [(ngModel)]="tarea.tipo"
+                            [ngModelOptions]="{standalone: true}">
+                            <option value="{{ tarea.nombre }}" *ngFor="let tarea of tipoTareas; let j = index">
+                                {{ tarea.nombre }}
+                            </option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <input class="form-control" type="text" placeholder="Nombre tarea" [(ngModel)]="tarea.nombre"
+                            [ngModelOptions]="{standalone: true}">
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" min="0" placeholder="Fecha Inicio."
+                            [(ngModel)]="tarea.inicio" [ngModelOptions]="{standalone: true}"
+                            (ngModelChange)="validateInputTarea(i,tarea.inicio,0)">
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" min="0" placeholder="Duración tarea"
+                            [(ngModel)]="tarea.duracion" [ngModelOptions]="{standalone: true}"
+                            (ngModelChange)="validateInputTarea(i,tarea.duracion,1)">
+                    </td>
+
+                    <td>
+                        <select placeholder="Depende de:" class="form-control" [(ngModel)]="tarea.dependencia"
+                            [ngModelOptions]="{standalone: true}">
+                            <option value="{{ tarea.nombre }}" [hidden]="j == i"
+                                *ngFor="let tarea of proyectoTareas.tareas; let j = index">
+                                {{ tarea.nombre }}
+                            </option>
+                        </select>
+                    </td>
+                    <td>
+                        <input class="btn btn-outline-secondary" type="button" value="Eliminar"
+                            (click)="eliminarElemento(i,'tarea')">
+                    </td>
+
+                    <!-- <td>
+                        <select placeholder="Tipo de dependencia:" class="form-control"
+                            [(ngModel)]="tarea.dependenciaTipo" [ngModelOptions]="{standalone: true}">
+                            <option *ngFor="let dependencia of dependenciaTipos; let j = index">
+                                {{ dependencia }}
+                            </option>
+                        </select>
+                    </td> -->
+                </tr>
+            </table>
+            <br>
+            <h6 *ngIf="mostrarTabla">*DIA DE INICIO: se refiere al día en el que podrá dar comienzo la tarea, siempre y
+                cuando las tareas de las que dependen estén finalizadas.</h6>
+            <br>
+            <input class="btn btn-outline-secondary" type="button" value="Añadir otra tarea" (click)="addTarea()">
+            <input type="submit" class="btn btn-outline-secondary" value="Asignar Recursos"
+                (click)="asignarRecursosTareas()">
+
+        </form>
+
+
+    </div>
+    <div *ngIf="asignarRecursos">
+        <h6>A continuación realice una primera aproximación de los recursos que utilizará cada tarea.</h6>
+        <br>
+        <table class="table">
+            <tr>
+                <td>
+                    NOMBRE DE LA TAREA
+                </td>
+                <td>
+                    DURACIÓN DE LA TAREA
+                </td>
+                <td>
+                    RECURSOS
+                </td>
+            </tr>
+            <tr *ngFor="let tarea of proyectoTareas.tareas; let i = index">
+                <td>
+                    {{tarea.nombre}}
+                </td>
+                <td>
+                    {{tarea.duracion}}
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>NOMBRE DEL RECURSO</td>
+                            <td>CANTIDAD DISPONIBLE</td>
+                            <td>CANTIDAD SELECCIONADA</td>
+                        </tr>
+
+                        <!-- <tr *ngFor="let recurso of proyectoTareas.recursos; let j = index">
+                            <td>{{recurso.nombre}}</td>
+                            <td>{{ getCantidadRecurso(recurso, proyectoTareas.tareas, j) }}</td>
+                            <td><input min="0" [disabled]="getCantidadRecurso(recurso, proyectoTareas.tareas, j)==0"
+                                    type="number" [(ngModel)]="tarea.recursos[j].cantidad" class="form-control"></td>
+                        </tr> -->
+                        <tr *ngFor="let recurso of proyectoTareas.recursos; let j = index">
+                            <td>{{recurso.nombre}}</td>
+                            <td>{{recurso.cantidad-tarea.recursos[j].cantidad}}</td>
+                            <!-- <td><input type="number" min="0" max="{{recurso.cantidad}}"
+                                    [(ngModel)]="tarea.recursos[j].cantidad"
+                                    (ngModelChange)="validateInput(tarea.recursos[j].cantidad,recurso.cantidad,i,j)"
+                                    class="form-control">
+                            </td>  -->
+                            <td>
+                                <select class="form-control" [(ngModel)]="tarea.recursos[j].cantidad"
+                                    [ngModelOptions]="{standalone: true}">
+                                    <option [ngValue]="j"
+                                        *ngFor="let num of numRecursosMaximo | slice:0:recurso.cantidad+1; let j = index ">
+                                        {{ j }}
+                                    </option>
+                                </select>
+                            </td>
+
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <td>
+                <input type="submit" class="btn btn-outline-secondary" value="Volver"
+                    (click)="asignarRecursos=false;gestionarRecursos=true;mostrarTabla=true">
+            </td>
+            <td>
+                <input type="submit" class="btn btn-outline-secondary" value="Crear" (click)="guardarProyectoTareas()">
+            </td>
+        </table>
+    </div>
+
+    <!-- muestra el estado de cada tarea en un diagrama de Gant-->
+
+    <div *ngIf="diagramaGant">
+        <br>
+        <br>
+        <div id="chart_div"></div>
+        <br>
+        <input type="submit" class="btn btn-outline-secondary" value="Volver al Inicio" (click)="atrasGantt()">
+    </div>
+
+
+    <!-- Creación de los riesgos por parte del alumno -->
+    <div *ngIf="crearRiesgos">
+        <h5>Riesgos</h5>
+        <h6>A continuación propón una lista de riesgos que crees que pueden afectar al correcto desarrollo de este
+            proyecto.</h6>
+        <table *ngIf="mostrarTablaRiesgos" class="table">
+            <tr *ngFor="let riesgo of proyectoRiesgos.riesgos; let i = index">
+                <td>
+                    <input class="form-control" placeholder="Nombre del Riesgo." [(ngModel)]="riesgo.nombre"
+                        [ngModelOptions]="{standalone: true}">
+                </td>
+                <td>
+                    <input class="form-control" placeholder="Descripción del Riesgo." [(ngModel)]="riesgo.descripcion"
+                        [ngModelOptions]="{standalone: true}">
+
+                </td>
+                <td>
+                    <input type="number" min="1" class="form-control" placeholder="Porcentaje aparición"
+                        [(ngModel)]="riesgo.porcentajeAparicion" [ngModelOptions]="{standalone: true}">
+                </td>
+
+
+            </tr>
+
+        </table>
+
+        <input class="btn btn-outline-secondary" type="button" value="Añadir otro riesgo" (click)="addRiesgo()">
+        <br>
+
+        <table>
+            <tr>
+                <td>
+                    <input type="submit" class="btn btn-outline-secondary" value="Guardar Proyecto"
+                        (click)="guardarProyectoRiesgos()">
+
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- Pantalla de simulación -->
+
+    <div *ngIf="simulacionPantalla">
+        <h5>¡Bienvenido a la pantalla de simulación!</h5>
+        <br>
+        <h6>Este es el estado de tus tareas, pincha en cualquiera de los botones bajo la tabla para realizar una acción.
+        </h6>
+        <table class="table">
+            <tr>
+                <td>
+                    NOMBRE DE TAREA:
+                </td>
+                <td>
+                    ESTADO:
+                </td>
+                <td>
+                    DIAS ESTIMADOS*:
+                </td>
+                <td>
+                    DIAS EMPLEADOS*:
+                </td>
+
+            </tr>
+            <tr *ngFor="let tarea of proyectoSimulacion.tareas; let i = index">
+                <td>{{tarea.nombre}}</td>
+                <td>{{tarea.estado}}</td>
+                <td>{{tarea.duracion}}</td>
+                <td>{{tarea.diasEmpleados}}</td>
+            </tr>
+
+        </table>
+
+        <h6>Dias totales de ejecución del plan:</h6>
+        <h6>{{proyectoSimulacion.diasTotalesProyecto}}</h6>
+        <br>
+        <h6>
+            *El número de días estimados se refiere a la cantidad de días en los que la tarea finalizará según tu
+            estimación.
+        </h6>
+        <br>
+        <h6>
+            *El número de días empleados se refiere a la cantidad de días que la tarea lleva en proceso o a la cantidad
+            de días que ha consumido para compeltarse en caso de que ya este finalizada.
+        </h6>
+        <br>
+        <table *ngIf="this.estadosSimulacion.length>1" class="table">
+            <tr>
+                <td>
+                    NOMBRE:
+                </td>
+                <td>
+                    DESCRIPCIÓN:
+                </td>
+                <td>
+                    CANTIDAD ASIGNADA:
+                </td>
+                <td>
+                    CANTIDAD LIBRE:
+                </td>
+
+
+            </tr>
+            <tr *ngFor="let recurso of proyectoSimulacion.recursos; let i = index">
+                <td>{{recurso.nombre}}</td>
+                <td>{{recurso.descripcion}}</td>
+                <td>{{numeroAsignadoSimulacion(recurso,proyectoSimulacion.tareas)}}</td>
+                <td>{{recurso.cantidad-numeroAsignadoSimulacion(recurso,proyectoSimulacion.tareas)}}</td>
+            </tr>
+        </table>
+        <br>
+        <h6 *ngIf="this.estadosSimulacion.length>1">
+            *La cantidad de recursos asignada, se refiere al total asignado a las tareas actualmente activas.
+        </h6>
+        <br>
+        <h6 *ngIf="this.estadosSimulacion.length>1">
+            *Un número negativo en la cantidad libre indica la necesidad de contratar o añadir más recursos de ese tipo,
+            ya que en ese momento existe una sobreasignación.
+        </h6>
+        <br>
+        <h6 *ngIf="this.estadosSimulacion.length>1">
+            *Al hacer click en Borrar Datos del Proyecto se eliminará todo lo relacionado con este proyecto, tanto lo
+            relacionado con
+            planificación como lo relacionado simulación si esta hubiera comenzado.
+        </h6>
+        <br>
+        <table>
+            <tr>
+
+                <td>
+                    <input type="submit" class="btn btn-outline-secondary" value="Volver"
+                        (click)="simulacionPantalla=false">
+                </td>
+
+                <td>
+                    <input
+                        [disabled]="proyectoSimulacion.estado==ESTADOS.FIN"
+                        type="submit" class="btn btn-outline-secondary" value="Replanificar"
+                        (click)="modificarPlanificacion()">
+                        <!-- <input
+                        [disabled]="proyectoSimulacion.diasTotalesProyecto==0 || proyectoSimulacion.estado==ESTADOS.FIN"
+                        type="submit" class="btn btn-outline-secondary" value="Replanificar"
+                        (click)="modificarPlanificacion()"> -->
+
+                </td>
+                <td>
+                    <input [disabled]="proyectoSimulacion.estado==ESTADOS.FIN" type="submit"
+                        class="btn btn-outline-secondary" value="Avanzar días" (click)="avanzarSimulacion()">
+                </td>
+                <td>
+                    <input type="submit" class="btn btn-outline-secondary" value="Borrar datos de Simulación"
+                        (click)="borrarSimulacion()">
+                </td>
+            </tr>
+        </table>
+
+
+    </div>
+
+    <!-- Pantalla de replanificacion de proyectos -->
+    <div *ngIf="replanificar">
+        <br>
+        <h6>En la siguiente tabla podrás modificar la cantidad de recursos asignados a cada tarea.</h6>
+        <br>
+        <table class="table">
+            <tr>
+                <td>
+                    NOMBRE DE LA TAREA
+                </td>
+                <td>
+                    DURACIÓN DE LA TAREA
+                </td>
+                <td>
+                    RECURSOS
+                </td>
+            </tr>
+            <tr *ngFor="let tarea of tareasNoFinalizadas; let i = index" [hidden]="tarea.estado==ESTADOSTAREAS.ESPERA">
+                <td>
+                    {{tarea.nombre}}
+                </td>
+                <td>
+                    {{tarea.duracion}}
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>NOMBRE DEL RECURSO</td>
+                            <td>CANTIDAD TOTAL</td>
+                            <td>CANTIDAD DISPONIBLE</td>
+                            <td>CANTIDAD SELECCIONADA</td>
+                            <td>CANTIDAD INICIAL ESTIMADA</td>
+
+                        </tr>
+
+                        <!-- MIRAR QUE NO SE LLAME AL getCantidadREcursos() si no esta validado el recurso, da error!! -->
+                        <tr *ngFor="let recurso of proyectoSimulacion.recursos; let j = index">
+                            <td>{{recurso.nombre}}</td>
+                            <td>
+                                <input min="0" type="number" [(ngModel)]="recurso.cantidad" class="form-control">
+                            </td>
+                            <td>{{ recurso.cantidad-numeroAsignado(recurso,proyectoSimulacion.tareas) }}</td>
+                            <!-- <td><input min="0"
+                                    [disabled]="(recurso.cantidad-numeroAsignado(recurso,proyectoSimulacion.tareas))==0"
+                                    type="number" [(ngModel)]="tarea.recursos[j].cantidad" class="form-control">
+                            </td> -->
+                            <!-- <td>
+                                <input min="0" max="{{recurso.cantidad}}" type="number"
+                                    [(ngModel)]="tarea.recursos[j].cantidad" class="form-control"
+                                    (ngModelChange)="validateInputReplanificacion(tarea.recursos[j])">
+                            </td>  -->
+                            <td>
+                                <select class="form-control" [(ngModel)]="tarea.recursos[j].cantidad"
+                                    [ngModelOptions]="{standalone: true}">
+                                    <option [ngValue]="j"
+                                        *ngFor="let num of numRecursosMaximo | slice:0:recurso.cantidad+1; let j = index ">
+                                        {{ j }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td>
+                                {{tarea.recursos[j].cantidadInicial}}
+                            </td>
+
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <input type="submit" class="btn btn-outline-secondary" value="Modificar" (click)="finReplanificacion()">
+    </div>
+
+
+    <div *ngIf="tablaFinal">
+
+        <table class="table">
+            <tr>
+                <td>
+                    DIA OCURRENCIA
+                </td>
+                <td>
+                    ACCIÓN
+                </td>
+                <td>
+                    RECURSO IMPLICADO
+                </td>
+                <td>
+                    TAREA IMPLICADA
+                </td>
+
+            </tr>
+            <tr *ngFor="let evento of eventos; let i = index">
+                <td>{{evento.dia}}</td>
+                <td>{{evento.accion}}</td>
+                <td>{{evento.recursoImplicado}}</td>
+                <td>{{evento.tareaImplicacada}}</td>
+
+            </tr>
+
+        </table>
+        <div>
+           
+                        <input type="submit" class="btn btn-outline-secondary" value="Volver"
+                        (click)="this.tablaFinal=false;">
+                    
+                        <button class="btn btn-outline-secondary" (click)="exportTableToCSV()">Descargar tabla en
+                            formato csv</button>
+                    
+                        <button class="btn btn-outline-secondary" (click)="almacenarResultados()">Enviar Resultados</button>
+             
+        </div>
+
+    </div>
+
+
+</div>
